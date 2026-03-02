@@ -1,86 +1,147 @@
-🛒 Ecommerce Product Scraper
+# Ecommerce Product Scraper
 
-A Python-based web scraper that extracts product details (name, price, brand, availability, image, category, subcategory, etc.) from an ecommerce site and saves the data into a SQLite database.
+A Python web scraper that extracts product information from e-commerce websites and stores it in a local SQLite database.
 
-✨ Features:
+The script collects the following fields when available:
+- Product name
+- Price
+- Brand
+- Category and subcategory
+- Availability status
+- Product image URL
+- Product URL (used as unique identifier)
 
-	Scrapes product details (name, price, brand, category, subcategory, availability, image link).
+Data is saved into a SQLite database (`product.db`) with duplicate prevention based on the product URL.
 
-	Saves data into SQLite (product.db) with unique product URLs to avoid duplicates.
+## Features
 
-	Works with a single URL or multiple product URLs.
+- Extracts structured product data using requests and BeautifulSoup
+- Stores data in a local SQLite database
+- Prevents duplicate entries using product URL as unique key
+- Supports scraping single products or multiple products via URL list
+- Minimal dependencies and lightweight execution
 
-	Clean, structured data storage for easy analysis or future integration.
+## Requirements
 
-⚡ How It Works:
+- Python 3.8+
+- requests
+- beautifulsoup4
 
-	Provide a product URL (or a list of product URLs).
+## Installation
 
-	The scraper will fetch and parse the page using requests and BeautifulSoup.
+1. Clone the repository
 
-	Product details are stored in a local SQLite database.
+   ```
+   git clone https://github.com/syedawais355/ecommerce-product-scraper.git
+   cd ecommerce-product-scraper
+   ```
 
-🔄 Single vs Multiple URLs:
+2. (Recommended) Create and activate a virtual environment
 
-Single URL:
+   ```
+   python -m venv venv
+   
+   # Linux / macOS
+   source venv/bin/activate
+   
+   # Windows (Command Prompt)
+   venv\Scripts\activate
+   
+   # Windows (PowerShell)
+   .\venv\Scripts\Activate.ps1
+   ```
 
+3. Install dependencies
+
+   ```
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+## Usage
+
+### Single product
+
+Edit `scraper.py` and set the URL, then run:
+
+```
+python scraper.py
+```
+
+Example in code:
+
+```
 url = "https://automationexercise.com/product_details/30"
 get_product(url)
+```
 
+### Multiple products
 
-Multiple URLs:
+Modify the script to include a list of URLs:
 
-Just create a Python list of URLs and loop over them:
-
+```
 urls = [
     "https://automationexercise.com/product_details/30",
     "https://automationexercise.com/product_details/31",
-    "https://automationexercise.com/product_details/32"
+    "https://automationexercise.com/product_details/32",
+    # add more URLs here
 ]
+
 for url in urls:
     get_product(url)
+```
 
+Then execute:
 
-This way, you can scrape multiple products at once with the same script.
+```
+python scraper.py
+```
 
-📂 Files:
+## Output
 
-	scraper.py → Main script to scrape and save product data.
+After running, two main outputs are generated:
 
-	requirements.txt → List of Python dependencies.
+1. Console output showing each processed product  
+2. SQLite database file: `product.db`
 
-	README.md → Project documentation.
+You can inspect the database using any SQLite viewer or with Python:
 
-🚀 Usage :
+```python
+import sqlite3
 
-Clone this repo:
+conn = sqlite3.connect('product.db')
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM products")
+print(cursor.fetchall())
+conn.close()
+```
 
-	git clone https://github.com/syedawais355/ecommerce-product-scraper.git
-	cd ecommerce-product-scraper
+Example console output:
 
+```
+Product: Blue Top
+Price: Rs. 500
+Brand: Polo
+Category: Women > Tops
+Availability: In Stock
+Image: https://...
+URL: https://automationexercise.com/product_details/30
+----------------------------------------
+```
 
-Install dependencies:
+## Project Files
 
-	pip install -r requirements.txt
+```
+ecommerce-product-scraper/
+├── scraper.py          Main scraping logic and database storage
+├── requirements.txt    Project dependencies
+├── product.db          Created automatically after first run (git ignored)
+└── README.md
+```
 
+## Notes
 
-Run the scraper:
-
-	python scraper.py
-
-🛠️ Tech Stack:
-
-	Python (requests, BeautifulSoup, sqlite3)
-
-	SQLite3 for lightweight database storage
- Output :
-<img width="827" height="143" alt="output" src="https://github.com/user-attachments/assets/8eaf3fd7-14c3-431b-993e-e70f1df6a598" />
-
-
-
-<img width="583" height="153" alt="output2" src="https://github.com/user-attachments/assets/c956979d-c863-4ebc-8455-7df29ccec6d9" />
-
-
-
-📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- This scraper is tailored to the structure of automationexercise.com.  
+  For other websites, selectors (find, find_all, get_text, etc.) will likely need adjustment.
+- Always respect the website’s `robots.txt` and terms of service.
+- Consider adding delays (time.sleep) when scraping multiple pages to avoid rate limiting or IP blocking.
