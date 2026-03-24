@@ -1,147 +1,134 @@
-# Ecommerce Product Scraper
+# 🛒 Ecommerce Product Scraper
 
-A Python web scraper that extracts product information from e-commerce websites and stores it in a local SQLite database.
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![BeautifulSoup](https://img.shields.io/badge/Scraper-BeautifulSoup4-green.svg)](https://www.crummy.com/software/BeautifulSoup/)
 
-The script collects the following fields when available:
-- Product name
-- Price
-- Brand
-- Category and subcategory
-- Availability status
-- Product image URL
-- Product URL (used as unique identifier)
+A robust, professional Python-based web scraper designed to extract detailed product information from e-commerce platforms. This tool streamlines data collection by capturing product names, pricing, branding, categories, and more, storing them in a structured SQLite database.
 
-Data is saved into a SQLite database (`product.db`) with duplicate prevention based on the product URL.
+---
 
-## Features
+## 🚀 Features
 
-- Extracts structured product data using requests and BeautifulSoup
-- Stores data in a local SQLite database
-- Prevents duplicate entries using product URL as unique key
-- Supports scraping single products or multiple products via URL list
-- Minimal dependencies and lightweight execution
+- **🔍 Precise Extraction:** Captures Name, Price, Brand, Category, Subcategory, Availability, and Image URL.
+- **🗄️ SQLite Integration:** Automatically stores data in a local `product.db` for easy access and persistence.
+- **🛡️ Duplicate Prevention:** Uses unique product URLs as keys to ensure data integrity and avoid redundant entries.
+- **📊 Detailed Logging:** Comprehensive logging for monitoring scraping progress and debugging issues.
+- **🛠️ Robust Error Handling:** Gracefully handles network timeouts, HTTP errors, and missing data points.
 
-## Requirements
+---
 
-- Python 3.8+
-- requests
-- beautifulsoup4
+## 📂 Project Structure
 
-## Installation
-
-1. Clone the repository
-
-   ```
-   git clone https://github.com/syedawais355/ecommerce-product-scraper.git
-   cd ecommerce-product-scraper
-   ```
-
-2. (Recommended) Create and activate a virtual environment
-
-   ```
-   python -m venv venv
-   
-   # Linux / macOS
-   source venv/bin/activate
-   
-   # Windows (Command Prompt)
-   venv\Scripts\activate
-   
-   # Windows (PowerShell)
-   .\venv\Scripts\Activate.ps1
-   ```
-
-3. Install dependencies
-
-   ```
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
-
-## Usage
-
-### Single product
-
-Edit `scraper.py` and set the URL, then run:
-
+```text
+ecommerce-product-scraper/
+├── scraper.py          # Main scraping engine and database logic
+├── requirements.txt    # Project dependencies
+├── product.db          # Local SQLite database (auto-generated)
+├── LICENSE             # MIT License file
+└── README.md           # Project documentation
 ```
+
+---
+
+## 🛠️ Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/syedawais355/ecommerce-product-scraper.git
+cd ecommerce-product-scraper
+```
+
+### 2. Set Up a Virtual Environment (Recommended)
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Usage
+
+### Running the Scraper
+The scraper is configured to process a single product URL by default. Execute the script with:
+
+```bash
 python scraper.py
 ```
 
-Example in code:
-
-```
-url = "https://automationexercise.com/product_details/30"
-get_product(url)
-```
-
-### Multiple products
-
-Modify the script to include a list of URLs:
-
-```
-urls = [
-    "https://automationexercise.com/product_details/30",
-    "https://automationexercise.com/product_details/31",
-    "https://automationexercise.com/product_details/32",
-    # add more URLs here
-]
-
-for url in urls:
-    get_product(url)
-```
-
-Then execute:
-
-```
-python scraper.py
-```
-
-## Output
-
-After running, two main outputs are generated:
-
-1. Console output showing each processed product  
-2. SQLite database file: `product.db`
-
-You can inspect the database using any SQLite viewer or with Python:
+### Customizing the Target
+To scrape a different product, modify the `target_url` in the `if __name__ == "__main__":` block of `scraper.py`:
 
 ```python
-import sqlite3
-
-conn = sqlite3.connect('product.db')
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM products")
-print(cursor.fetchall())
-conn.close()
+if __name__ == "__main__":
+    init_db()
+    target_url = "https://automationexercise.com/product_details/1" # Change this
+    get_product(target_url)
 ```
 
-Example console output:
+---
 
-```
-Product: Blue Top
-Price: Rs. 500
-Brand: Polo
-Category: Women > Tops
-Availability: In Stock
-Image: https://...
-URL: https://automationexercise.com/product_details/30
-----------------------------------------
-```
+## 📊 Data Schema
 
-## Project Files
+The collected data is stored in the `products` table of `product.db` with the following structure:
 
-```
-ecommerce-product-scraper/
-├── scraper.py          Main scraping logic and database storage
-├── requirements.txt    Project dependencies
-├── product.db          Created automatically after first run (git ignored)
-└── README.md
-```
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `id` | INTEGER | Primary Key (Auto-increment) |
+| `name` | TEXT | Product Name |
+| `category` | TEXT | Primary Category |
+| `subcategory` | TEXT | Specific Subcategory |
+| `price` | TEXT | Product Price (Numeric string) |
+| `image_url` | TEXT | URL to the product image |
+| `availability`| TEXT | Stock status (In Stock / Out of Stock) |
+| `brand` | TEXT | Manufacturer/Brand name |
+| `product_url` | TEXT | Unique identifier for the product |
 
-## Notes
+---
 
-- This scraper is tailored to the structure of automationexercise.com.  
-  For other websites, selectors (find, find_all, get_text, etc.) will likely need adjustment.
-- Always respect the website’s `robots.txt` and terms of service.
-- Consider adding delays (time.sleep) when scraping multiple pages to avoid rate limiting or IP blocking.
+## 🛡️ Best Practices & Ethics
+
+- **Respect Robots.txt:** Always check the website's `robots.txt` before scraping.
+- **Rate Limiting:** If scraping multiple products, implement `time.sleep()` to avoid overwhelming server resources.
+- **User-Agent:** Consider adding a custom User-Agent in `requests.get()` headers for more professional requests.
+
+---
+
+## 🛣️ Roadmap
+
+- [ ] Support for multiple concurrent URLs (Threading/Async).
+- [ ] Export functionality (CSV, JSON, Excel).
+- [ ] Support for additional e-commerce templates.
+- [ ] Integration with Headless Browsers (Playwright/Selenium) for dynamic content.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+**Developed with ❤️ by [Syed Muhammad Awais Gillani](https://github.com/syedawais355)**
